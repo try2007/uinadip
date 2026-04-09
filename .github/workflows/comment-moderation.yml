@@ -20,4 +20,4 @@ jobs:
         uses: IEvangelist/profanity-filter@main
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          replacement-strategy: Emoji   # Можно Asterisk, FirstLetterThenAsterisk
+          replacement-strategy: Emoji
