@@ -3,7 +3,6 @@ name: Moderate Profanity
 on:
   discussion_comment:
     types: [created, edited]
-  workflow_dispatch:  # позволяет запустить вручную из вкладки Actions
 
 permissions:
   discussions: write
