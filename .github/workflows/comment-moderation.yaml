@@ -8,14 +8,33 @@ permissions:
   discussions: write
 
 jobs:
-  moderate:
+  censor:
     runs-on: ubuntu-latest
     steps:
-      - name: Check and censor comment
-        uses: ktmud/comment-censor-action@master
+      - name: Censor bad words
+        uses: actions/github-script@v7
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          bad_words: "fuck,shit,damn,bitch,хуй,пизда,бля,ебать,мудак,сука"
-          censor_char: "*"
-          # Указываем, что работаем с обсуждением
-          discussion_comment: true
+          script: |
+            const badWords = ['fuck', 'shit', 'damn', 'bitch', 'cunt', 'хуй', 'пизда', 'бля', 'ебать', 'мудак', 'сука', 'залупа', 'пидор', 'гандон', 'еблан', 'долбоеб'];
+            
+            const comment = context.payload.comment;
+            const body = comment.body;
+            let censoredBody = body;
+            let wasCensored = false;
+            
+            for (const word of badWords) {
+              const regex = new RegExp(word, 'gi');
+              if (regex.test(censoredBody)) {
+                wasCensored = true;
+                censoredBody = censoredBody.replace(regex, '***');
+              }
+            }
+            
+            if (wasCensored && body !== censoredBody) {
+              await github.rest.discussions.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: comment.id,
+                body: censoredBody
+              });
+            }
