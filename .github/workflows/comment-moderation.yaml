@@ -31,19 +31,11 @@ jobs:
             }
             
             if (wasCensored && body !== censoredBody) {
-              // Правильный API для обновления комментария в Discussion
-              await github.graphql(`
-                mutation UpdateDiscussionComment($input: UpdateDiscussionCommentInput!) {
-                  updateDiscussionComment(input: $input) {
-                    comment {
-                      body
-                    }
-                  }
-                }
-              `, {
-                input: {
-                  commentId: comment.node_id,
-                  body: censoredBody
-                }
+              // Используем REST API для обновления комментария
+              await github.rest.discussions.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: comment.id,
+                body: censoredBody
               });
             }
