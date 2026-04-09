@@ -1,17 +1,27 @@
 name: Moderate Profanity
 
+# 1. Триггеры: Реагируем на создание/изменение комментариев в Discussions
 on:
   discussion_comment:
     types: [created, edited]
 
+# 2. Права доступа: Даем токену максимально широкие права на запись
 permissions:
+  # Без этого права не обновить комментарий
   discussions: write
+  # Даем и остальные, на всякий случай, чтобы не было ошибок
+  contents: read
+  pull-requests: read
+  issues: read
 
 jobs:
   filter:
     runs-on: ubuntu-latest
     steps:
-      - uses: IEvangelist/profanity-filter@main
+      - name: Scan for profanity
+        # 3. Action: IEvangelist/profanity-filter
+        uses: IEvangelist/profanity-filter@main
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          replacement-strategy: Emoji
+          # 4. Стратегия замены: Звездочки (работает всегда)
+          replacement-strategy: Asterisk
