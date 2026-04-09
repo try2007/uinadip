@@ -4,7 +4,6 @@ on:
   discussion_comment:
     types: [created, edited]
 
-# Убираем permissions, так как будем использовать PAT
 jobs:
   censor:
     runs-on: ubuntu-latest
@@ -14,7 +13,7 @@ jobs:
         with:
           github-token: ${{ secrets.token }}
           script: |
-            const badWords = ['fuck', 'shit', 'damn', 'bitch', 'хуй', 'пизда', 'бля', 'ебать', 'мудак', 'сука'];
+            const badWords = '${{ secrets.bad }}'.split(',');
             
             const comment = context.payload.comment;
             const body = comment.body;
@@ -22,7 +21,7 @@ jobs:
             let wasCensored = false;
             
             for (const word of badWords) {
-              const regex = new RegExp(word, 'gi');
+              const regex = new RegExp(word.trim(), 'gi');
               if (regex.test(censoredBody)) {
                 wasCensored = true;
                 censoredBody = censoredBody.replace(regex, '***');
@@ -30,23 +29,16 @@ jobs:
             }
             
             if (wasCensored && body !== censoredBody) {
-              // GraphQL запрос для обновления комментария
-              const query = `
+              await github.graphql(`
                 mutation($input: UpdateDiscussionCommentInput!) {
                   updateDiscussionComment(input: $input) {
-                    comment {
-                      body
-                    }
+                    comment { body }
                   }
                 }
-              `;
-              
-              const variables = {
+              `, {
                 input: {
                   commentId: comment.node_id,
                   body: censoredBody
                 }
-              };
-              
-              await github.graphql(query, variables);
+              });
             }
