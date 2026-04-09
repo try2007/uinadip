@@ -1,5 +1,7 @@
 remote_theme: pages-themes/cayman@v0.2.0
-
+theme: Ust-Ilimsk NADIP
+title: Kolosov Andrey Nikolaevich
+description: Study materials for NADIP!
 layout: default
 comments: true
 # other options
