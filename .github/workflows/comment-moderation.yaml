@@ -13,7 +13,7 @@ jobs:
         with:
           github-token: ${{ secrets.token }}
           script: |
-            const badWords = '${{ secrets.bad }}'.split(',');
+            const badWords = '${{ secrets.bads }}'.split(',');
             
             const comment = context.payload.comment;
             const body = comment.body;
