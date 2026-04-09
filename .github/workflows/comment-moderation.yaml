@@ -1,16 +1,21 @@
+name: Moderate Profanity
+
 on:
   discussion_comment:
     types: [created, edited]
 
+permissions:
+  discussions: write
+
 jobs:
   moderate:
     runs-on: ubuntu-latest
-    permissions:
-      discussions: write
     steps:
-      - name: Moderate profanity in comments
-        uses: jglovier/discussions-moderator-action@main
+      - name: Check and censor comment
+        uses: ktmud/comment-censor-action@master
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          bad-words: "fuck,shit,damn,хуй,пизда,бля,ебать"
-          replacement-text: "***"
+          token: ${{ secrets.GITHUB_TOKEN }}
+          bad_words: "fuck,shit,damn,bitch,хуй,пизда,бля,ебать,мудак,сука"
+          censor_char: "*"
+          # Указываем, что работаем с обсуждением
+          discussion_comment: true
