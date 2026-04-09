@@ -12,7 +12,7 @@ jobs:
       - name: Censor bad words
         uses: actions/github-script@v7
         with:
-          github-token: ${{ secrets.PAT_TOKEN }}
+          github-token: ${{ secrets.token }}
           script: |
             const badWords = ['fuck', 'shit', 'damn', 'bitch', 'хуй', 'пизда', 'бля', 'ебать', 'мудак', 'сука'];
             
