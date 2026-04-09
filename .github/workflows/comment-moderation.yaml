@@ -1,23 +1,18 @@
 name: Moderate Profanity
 
 on:
-  issue_comment:
+  discussion_comment:
     types: [created, edited]
-  issues:
-    types: [opened, edited, reopened]
-  pull_request:
-    types: [opened, edited, reopened]
+  workflow_dispatch:  # позволяет запустить вручную из вкладки Actions
 
 permissions:
-  issues: write
-  pull-requests: write
+  discussions: write
 
 jobs:
-  filter-profanity:
+  filter:
     runs-on: ubuntu-latest
     steps:
-      - name: Filter bad words
-        uses: IEvangelist/profanity-filter@main
+      - uses: IEvangelist/profanity-filter@main
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           replacement-strategy: Emoji
