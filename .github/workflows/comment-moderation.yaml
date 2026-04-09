@@ -15,7 +15,7 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
-            const badWords = ['fuck', 'shit', 'damn', 'bitch', 'cunt', 'хуй', 'пизда', 'бля', 'ебать', 'мудак', 'сука', 'залупа', 'пидор', 'гандон', 'еблан', 'долбоеб'];
+            const badWords = ['fuck', 'shit', 'damn', 'bitch', 'хуй', 'пизда', 'бля', 'ебать', 'мудак', 'сука'];
             
             const comment = context.payload.comment;
             const body = comment.body;
@@ -31,10 +31,19 @@ jobs:
             }
             
             if (wasCensored && body !== censoredBody) {
-              await github.rest.discussions.updateComment({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                comment_id: comment.id,
-                body: censoredBody
+              // Правильный API для обновления комментария в Discussion
+              await github.graphql(`
+                mutation UpdateDiscussionComment($input: UpdateDiscussionCommentInput!) {
+                  updateDiscussionComment(input: $input) {
+                    comment {
+                      body
+                    }
+                  }
+                }
+              `, {
+                input: {
+                  commentId: comment.node_id,
+                  body: censoredBody
+                }
               });
             }
