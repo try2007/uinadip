@@ -1,24 +1,16 @@
-name: Moderate Profanity
-
-# ✅ Только эти три типа событий поддерживаются Action'ом
 on:
-  issue_comment:
+  discussion_comment:
     types: [created, edited]
-  issues:
-    types: [opened, edited, reopened]
-  pull_request:
-    types: [opened, edited, reopened]
-
-# ✅ Права строго как в документации
-permissions:
-  issues: write
-  pull-requests: write
 
 jobs:
-  filter:
+  moderate:
     runs-on: ubuntu-latest
+    permissions:
+      discussions: write
     steps:
-      - uses: IEvangelist/profanity-filter@main
+      - name: Moderate profanity in comments
+        uses: jglovier/discussions-moderator-action@main
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          replacement-strategy: Asterisk
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          bad-words: "fuck,shit,damn,хуй,пизда,бля,ебать"
+          replacement-text: "***"
