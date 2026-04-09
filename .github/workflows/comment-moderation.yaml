@@ -1,27 +1,24 @@
 name: Moderate Profanity
 
-# 1. Триггеры: Реагируем на создание/изменение комментариев в Discussions
+# ✅ Только эти три типа событий поддерживаются Action'ом
 on:
-  discussion_comment:
+  issue_comment:
     types: [created, edited]
+  issues:
+    types: [opened, edited, reopened]
+  pull_request:
+    types: [opened, edited, reopened]
 
-# 2. Права доступа: Даем токену максимально широкие права на запись
+# ✅ Права строго как в документации
 permissions:
-  # Без этого права не обновить комментарий
-  discussions: write
-  # Даем и остальные, на всякий случай, чтобы не было ошибок
-  contents: read
-  pull-requests: read
-  issues: read
+  issues: write
+  pull-requests: write
 
 jobs:
   filter:
     runs-on: ubuntu-latest
     steps:
-      - name: Scan for profanity
-        # 3. Action: IEvangelist/profanity-filter
-        uses: IEvangelist/profanity-filter@main
+      - uses: IEvangelist/profanity-filter@main
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          # 4. Стратегия замены: Звездочки (работает всегда)
           replacement-strategy: Asterisk
